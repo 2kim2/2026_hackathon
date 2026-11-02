@@ -1,3 +1,4 @@
+
 from django.db import models
 from django.conf import settings
 
@@ -36,13 +37,11 @@ class FamilyConnection(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        # 동일한 두 계정 사이의 중복 연결 방지
         constraints = [
             models.UniqueConstraint(
                 fields=['guardian', 'senior'],
                 name='unique_family_connection'
             ),
-            # 자기 자신과 연결할 수 없음
             models.CheckConstraint(
                 condition=~models.Q(guardian=models.F('senior')),
                 name='family_connection_not_self'
@@ -51,3 +50,34 @@ class FamilyConnection(models.Model):
 
     def __str__(self):
         return f'{self.guardian.username} → {self.senior.username}'
+
+
+class FamilyConnectionCode(models.Model):
+
+    # 코드를 발급한 어르신
+    senior = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='family_connection_codes'
+    )
+
+    # 8자리 연결 코드
+    code = models.CharField(
+        max_length=8,
+        unique=True
+    )
+
+    # 코드 만료 시각
+    expires_at = models.DateTimeField()
+
+    # 사용 여부
+    is_used = models.BooleanField(default=False)
+
+    # 생성 시각
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f'{self.senior.username} - {self.code}'
