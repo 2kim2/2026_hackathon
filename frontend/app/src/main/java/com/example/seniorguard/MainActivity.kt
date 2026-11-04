@@ -11,9 +11,57 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.seniorguard.ui.theme.SeniorGuardTheme
 
+
 class MainActivity : ComponentActivity() {
+
+    private val handler =
+        android.os.Handler(android.os.Looper.getMainLooper())
+
+    private var monitorTask: Runnable? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
+        android.util.Log.d(
+            "SeniorGuardUsage",
+            "사용 기록 접근 권한: ${UsageEventMonitor.hasUsageAccess(this)}"
+        )
+
+        var lastCheckedTime = System.currentTimeMillis() - 5 * 60 * 1000L
+
+        monitorTask = object : Runnable {
+            override fun run() {
+                val events = UsageEventMonitor.getRecentEvents(
+                    this@MainActivity,
+                    lastCheckedTime
+                )
+
+                lastCheckedTime = System.currentTimeMillis()
+
+                events.forEach { (appPackage, eventTime) ->
+                    val snapshot = SnapshotCollector.collect(
+                        this@MainActivity,
+                        appPackage
+                    )
+
+                    android.util.Log.d(
+                        "SeniorGuardSnapshot",
+                        "앱=$appPackage, 이벤트=$eventTime, " +
+                                "수집=${snapshot.snapshotTime}, " +
+                                "권한=${snapshot.permissions.size}개, " +
+                                "인터넷=${snapshot.internetConnected}, " +
+                                "화면=${snapshot.screenInteractive}"
+                    )
+                }
+
+                handler.postDelayed(this, 5000L)
+            }
+        }
+
+        monitorTask?.let { handler.post(it) }
+
+
+
         enableEdgeToEdge()
 
         FCMTokenManager.fetchToken()
@@ -121,4 +169,11 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
+    override fun onDestroy() {
+        monitorTask?.let { handler.removeCallbacks(it) }
+        monitorTask = null
+        super.onDestroy()
+    }
+
 }
