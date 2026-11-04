@@ -14,11 +14,6 @@ import com.example.seniorguard.ui.theme.SeniorGuardTheme
 
 class MainActivity : ComponentActivity() {
 
-    private val handler =
-        android.os.Handler(android.os.Looper.getMainLooper())
-
-    private var monitorTask: Runnable? = null
-
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
@@ -26,41 +21,6 @@ class MainActivity : ComponentActivity() {
             "SeniorGuardUsage",
             "사용 기록 접근 권한: ${UsageEventMonitor.hasUsageAccess(this)}"
         )
-
-        var lastCheckedTime = System.currentTimeMillis() - 5 * 60 * 1000L
-
-        monitorTask = object : Runnable {
-            override fun run() {
-                val events = UsageEventMonitor.getRecentEvents(
-                    this@MainActivity,
-                    lastCheckedTime
-                )
-
-                lastCheckedTime = System.currentTimeMillis()
-
-                events.forEach { (appPackage, eventTime) ->
-                    val snapshot = SnapshotCollector.collect(
-                        this@MainActivity,
-                        appPackage
-                    )
-
-                    android.util.Log.d(
-                        "SeniorGuardSnapshot",
-                        "앱=$appPackage, 이벤트=$eventTime, " +
-                                "수집=${snapshot.snapshotTime}, " +
-                                "권한=${snapshot.permissions.size}개, " +
-                                "인터넷=${snapshot.internetConnected}, " +
-                                "화면=${snapshot.screenInteractive}"
-                    )
-                }
-
-                handler.postDelayed(this, 5000L)
-            }
-        }
-
-        monitorTask?.let { handler.post(it) }
-
-
 
         enableEdgeToEdge()
 
@@ -107,6 +67,41 @@ class MainActivity : ComponentActivity() {
                                     text = "시니어가드 화면 테스트",
                                     style = MaterialTheme.typography.headlineSmall
                                 )
+
+                                Button(
+                                    onClick = {
+                                        if (UsageEventMonitor.hasUsageAccess(this@MainActivity)) {
+                                            val intent = android.content.Intent(
+                                                this@MainActivity,
+                                                MonitoringService::class.java
+                                            )
+
+                                            androidx.core.content.ContextCompat.startForegroundService(
+                                                this@MainActivity,
+                                                intent
+                                            )
+                                        } else {
+                                            UsageEventMonitor.openUsageAccessSettings(
+                                                this@MainActivity
+                                            )
+                                        }
+                                    }
+                                ) {
+                                    Text("백그라운드 감시 시작")
+                                }
+
+                                Button(
+                                    onClick = {
+                                        val intent = android.content.Intent(
+                                            this@MainActivity,
+                                            MonitoringService::class.java
+                                        )
+                                        stopService(intent)
+                                    }
+                                ) {
+                                    Text("백그라운드 감시 중지")
+                                }
+
 
                                 // 1번 파트
                                 Button(onClick = { currentScreen = "permission" }) { Text("권한 안내 화면") }
@@ -169,11 +164,4 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-
-    override fun onDestroy() {
-        monitorTask?.let { handler.removeCallbacks(it) }
-        monitorTask = null
-        super.onDestroy()
-    }
-
 }
