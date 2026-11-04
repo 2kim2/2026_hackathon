@@ -16,7 +16,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        // FCMTokenManager.fetchToken()
+        FCMTokenManager.fetchToken()
 
         setContent {
             SeniorGuardTheme {
