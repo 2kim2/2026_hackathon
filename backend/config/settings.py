@@ -38,7 +38,7 @@ ALLOWED_HOSTS = [
 # Backend 2 분석 서버
 BE2_ANALYSIS_URL = os.getenv(
     'BE2_ANALYSIS_URL',
-    'http://실제_BE2_서버_IP:8001/api/analyze/'
+    'https://two026-hackathon.onrender.com/api/analyze/'
 )
 
 BE2_TIMEOUT = int(os.getenv('BE2_TIMEOUT', '25'))
