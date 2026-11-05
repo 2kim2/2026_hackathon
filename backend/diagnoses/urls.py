@@ -3,6 +3,7 @@ from django.urls import path
 from .views import (
     DiagnosisResultListCreateView,
     DiagnosisResultDetailView,
+    DiagnosisAnalyzeView,
 )
 
 
@@ -13,6 +14,13 @@ urlpatterns = [
         '',
         DiagnosisResultListCreateView.as_view(),
         name='diagnosis-list-create'
+    ),
+
+    # 새 앱 이벤트 분석 요청
+    path(
+        'analyze/',
+        DiagnosisAnalyzeView.as_view(),
+        name='diagnosis-analyze'
     ),
 
     # 진단 결과 상세 조회

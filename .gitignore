@@ -24,3 +24,6 @@ db.sqlite3
 # Operating system
 .DS_Store
 Thumbs.db
+
+# Firebase service account key
+backend/secrets/
