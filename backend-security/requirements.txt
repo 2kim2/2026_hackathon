@@ -1,14 +1,5 @@
-asgiref @ file:///C:/Users/task_179336562547497/croot/asgiref_1793365708565/work
-certifi==2026.10.23
-charset-normalizer==3.5.2
-Django @ file:///C:/Users/task_179153171528470/croot/django_1791532351002/work
+Django
 djangorestframework==3.18.3
 gunicorn==26.2.0
-idna==3.20
-packaging==26.3
 python-dotenv==1.2.4
 requests==2.34.2
-setuptools==84.2.1
-sqlparse @ file:///C:/Users/task_178791226190669/croot/sqlparse_1787912351043/work
-urllib3==2.8.0
-wheel==0.48.0
