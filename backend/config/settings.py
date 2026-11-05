@@ -121,12 +121,10 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/6.1/topics/i18n/
 
-LANGUAGE_CODE = "en-us"
-
-TIME_ZONE = "UTC"
+LANGUAGE_CODE = "ko-kr"
+TIME_ZONE = "Asia/Seoul"
 
 USE_I18N = True
-
 USE_TZ = True
 
 
@@ -139,11 +137,7 @@ STATIC_URL = "static/"
 # Email
 # https://docs.djangoproject.com/en/6.1/topics/email/#topic-email-configuration
 
-MAILERS = {
-    "default": {
-        "BACKEND": "django.core.mail.backends.console.EmailBackend",
-    },
-}
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
 # Django REST Framework 설정
 REST_FRAMEWORK = {
@@ -156,5 +150,10 @@ REST_FRAMEWORK = {
     ],
 }
 
-# 사용자 모델 지정
 AUTH_USER_MODEL = 'accounts.User'
+
+# 배포 환경 보안 설정
+if not DEBUG:
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
