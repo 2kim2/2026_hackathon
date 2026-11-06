@@ -193,6 +193,12 @@ class FamilyRequestView(APIView):
                 {'error': '해당 사용자를 찾을 수 없습니다.'},
                 status=status.HTTP_404_NOT_FOUND
             )
+            
+        if senior.id == request.user.id:
+            return Response(
+                {'error': '자기 자신에게 연결 요청을 보낼 수 없습니다.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
         if senior.role != 'senior':
             return Response(

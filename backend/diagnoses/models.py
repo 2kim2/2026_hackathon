@@ -1,3 +1,4 @@
+
 from django.db import models
 from django.conf import settings
 
@@ -10,32 +11,79 @@ class DiagnosisResult(models.Model):
         ('danger', '위험'),
     ]
 
-    # 진단을 받은 사용자
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name='diagnosis_results'
     )
 
-    # 전체 위험 점수
+    # 분석 대상 앱 정보
+    package_name = models.CharField(
+        max_length=255,
+        blank=True,
+        default=''
+    )
+
+    apk_sha256 = models.CharField(
+        max_length=64,
+        blank=True,
+        default=''
+    )
+
+    event_type = models.CharField(
+        max_length=100,
+        blank=True,
+        default=''
+    )
+
+    # Android에서 전달한 원본 시각
+    occurred_at = models.DateTimeField(
+        null=True,
+        blank=True
+    )
+
+    collected_at = models.DateTimeField(
+        null=True,
+        blank=True
+    )
+
+    # 분석 결과
     risk_score = models.IntegerField(default=0)
 
-    # 최종 위험 등급
     risk_level = models.CharField(
         max_length=20,
         choices=RISK_LEVEL_CHOICES
     )
 
-    # 진단 결과 요약
     summary = models.TextField(blank=True)
 
-    # 위험 판정 근거
     reasons = models.JSONField(default=list, blank=True)
 
-    # 진단을 실시한 시각
+    confidence = models.FloatField(default=0.2)
+
+    confidence_level = models.CharField(
+        max_length=20,
+        blank=True,
+        default=''
+    )
+
+    time_gap_seconds = models.FloatField(
+        null=True,
+        blank=True
+    )
+
+    score_breakdown = models.JSONField(
+        default=dict,
+        blank=True
+    )
+
+    virustotal = models.JSONField(
+        default=dict,
+        blank=True
+    )
+
     scanned_at = models.DateTimeField()
 
-    # 서버에 저장된 시각
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

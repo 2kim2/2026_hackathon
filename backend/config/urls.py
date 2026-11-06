@@ -16,4 +16,7 @@ urlpatterns = [
 
     # 진단 결과 API
     path('api/diagnoses/', include('diagnoses.urls')),
+    
+    # FCM 토큰 관리 API
+    path('api/notifications/', include('notifications.urls')),
 ]
