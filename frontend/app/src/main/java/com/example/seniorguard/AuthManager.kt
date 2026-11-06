@@ -44,7 +44,8 @@ object AuthManager {
                         .use { it.readText() }
 
                     val authToken = JSONObject(response).getString("token")
-
+                    DiagnosisSender.baseUrl = baseUrl
+                    DiagnosisSender.authToken = authToken
                     Log.d("SeniorGuardFCM", "로그인 성공, FCM 등록 요청 시작")
 
                     FCMTokenManager.registerToken(
