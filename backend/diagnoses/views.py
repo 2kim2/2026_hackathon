@@ -52,7 +52,7 @@ def send_danger_notification(diagnosis):
     try:
         result = notify_guardians_of_danger(diagnosis)
 
-        logger.info(
+        logger.warning(
             '위험 진단 알림 처리 완료: diagnosis_id=%s, result=%s',
             diagnosis.id,
             result,
