@@ -27,3 +27,10 @@ Thumbs.db
 
 # Firebase service account key
 backend/secrets/
+
+# Android / Gradle
+.idea/
+frontend/.idea/
+frontend/.gradle/
+frontend/**/build/
+frontend/local.properties
