@@ -47,6 +47,7 @@ class MonitoringService : Service() {
                                 "인터넷=${snapshot.internetConnected}, " +
                                 "화면=${snapshot.screenInteractive}"
                     )
+                    DiagnosisSender.send(this@MonitoringService, snapshot, eventTime)
                 }
 
             } catch (e: Exception) {
