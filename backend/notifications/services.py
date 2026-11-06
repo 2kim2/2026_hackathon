@@ -133,7 +133,7 @@ def notify_guardians_of_danger(diagnosis):
     )
 
     if not tokens:
-        logger.info(
+        logger.warning(
             "알림을 발송할 보호자 FCM 토큰이 없습니다. diagnosis_id=%s",
             diagnosis.id,
         )
@@ -159,7 +159,7 @@ def notify_guardians_of_danger(diagnosis):
         },
     )
 
-    logger.info(
+    logger.warning(
         "위험 알림 발송 완료: diagnosis_id=%s, result=%s",
         diagnosis.id,
         result,
